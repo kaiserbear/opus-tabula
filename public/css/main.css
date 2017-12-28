@@ -1,0 +1,13 @@
+.navbar-nav.navbar-right li {
+  padding: 10px 0; }
+
+.navbar-nav.navbar-right img {
+  max-width: 50px;
+  border-radius: 100%;
+  float: left; }
+
+.navbar-nav.navbar-right a {
+  float: left; }
+
+#delete-form {
+  display: inline; }

@@ -1,0 +1,19 @@
+.navbar-nav {
+	&.navbar-right {
+		li {
+			padding: 10px 0;
+		}
+		img {
+			max-width: 50px;
+			border-radius: 100%;
+			float: left;
+		}
+		a {
+			float:left;
+		}
+	}
+}
+
+#delete-form {
+    display: inline;
+}

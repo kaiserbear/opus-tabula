@@ -1,0 +1,28 @@
+<% include ../partials/header %> 
+
+ <div class="container">
+     <div class="container">
+         <h1>Welcome To Job Camp!</h1>
+         <p>Lorem ipsum</p>
+         <p>
+            <a class="btn btn-primary btn-large" href="/jobs/new">Add New Job</a>
+         </p>
+     </div>
+     <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <% jobs.forEach(function(job){ %>
+            <div class="col-md-3 col-sm-6">
+                <div class="thumbnail">
+                   <img src="<%= job.image %>">
+                   <div class="caption">
+                       <h4><%= job.name %></h4>
+                   </div>
+                   <p>
+                       <a href="/jobs/<%= job._id %>" class="btn btn-primary">More Info</a>
+                   </p>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</div>
+
+<% include ../partials/footer %>
