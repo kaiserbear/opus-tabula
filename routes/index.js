@@ -8,14 +8,14 @@ router.get("/", function(req, res){
     res.render("landing");
 });
 
-// // show register form
-// router.get("/register", function(req, res){
-//    res.render("register"); 
-// });
+// show register form
+router.get("/register", function(req, res){
+   res.render("register"); 
+});
 
 //handle sign up logic
 // router.post("/register", function(req, res){
-//     var newUser = new User({username: req.body.username});
+//     var newUser = new User({ username: req.body.username });
 //     User.register(newUser, req.body.password, function(err, user){
 //         if(err){
 //             req.flash("error", err.message);
@@ -34,11 +34,10 @@ router.get("/login", function(req, res){
 });
 
 //handling login logic
-router.post("/login", passport.authenticate("linkedin",
-    {
+router.post("/login", passport.authenticate("linkedin", {
         successRedirect: "/jobs",
         failureRedirect: "/login"
-    }), function(req, res){
+    }), function(req, res) {
 });
 
 // logout route

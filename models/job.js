@@ -1,22 +1,20 @@
 var mongoose = require("mongoose");
 
-var campgroundSchema = new mongoose.Schema({
-   name: String,
+var jobSchema = new mongoose.Schema({
+   title: String,
    image: String,
    description: String,
    author: {
-      id: {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: "User"
-      },
-      username: String
+      username: String,
+      picture: String
    },
-   comments: [
-      {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: "Comment"
-      }
-   ]
+   date: { type: Date, default: Date.now }
+   // comments: [
+   //    {
+   //       type: mongoose.Schema.Types.ObjectId,
+   //       ref: "Comment"
+   //    }
+   // ]
 });
 
-module.exports = mongoose.model("Campground", campgroundSchema);
+module.exports = mongoose.model("Job", jobSchema);

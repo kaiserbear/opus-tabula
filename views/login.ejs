@@ -1,5 +1,9 @@
 <% include ./partials/header %>
 
+<div class="container">
+    <div class="row">
+
+
 <% if (!user) { %>
 	<h2>Welcome! Please log in.</h2>
 	<a href="/auth/linkedin">Login with Linkedin</a>
@@ -8,5 +12,7 @@
 	<pre><code><%= JSON.stringify(user, null, 2) %></code></pre>
 <% } %>
 
+	</div>
+</div>
 
 <% include ./partials/footer %>

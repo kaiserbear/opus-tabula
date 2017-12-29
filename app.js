@@ -73,12 +73,60 @@ passport.use('linkedin', new LinkedinStrategy({
     function(req, accessToken, refreshToken, profile, done) {
         // asynchronous verification, for effect...
         req.session.accessToken = accessToken;
+
         process.nextTick(function() {
-            // To keep the example simple, the user's Linkedin profile is returned to
-            // represent the logged-in user.  In a typical application, you would want
-            // to associate the Linkedin account with a user record in your database,
-            // and return that user instead.
-            return done(null, profile);
+
+            // check if the user is already logged in
+            if (!req.user) {
+
+                // find the user in the database based on their linkedIn id
+                User.findOne({ 'linkedIn.id' : profile.id }, function(err, user) {
+
+                    if (err)
+                        return done(err);
+
+                    // if the user is found, then update their details?
+                    if (user) {
+                        return done(null, {user : user, profile : profile}); // user found, return that user and their profile
+                    }
+
+                    else {
+                        // if there is no user found with that linkedIn id, create them
+                        var newUser = new User();
+                        // set all of the linkedIn information in our user model
+                        newUser.linkedIn.id    = profile.id; // set the users linked id
+                        newUser.linkedIn.name  = profile.name.givenName + ' ' + profile.name.familyName; // look at the passport user profile to see how names are returned
+                        newUser.linkedIn.email = profile.emails[0].value; // linkedIn can return multiple emails so we'll take the first
+                        // save our user to the database
+                        newUser.save(function(err) {
+                            if (err)
+                                throw err;
+                            // if successful, return the new user
+                            return done(null, newUser);
+                        });
+                    }
+
+                });
+
+            } else if (req.user) {
+
+                // user already exists and is logged in, we have to link accounts
+                var user            = req.user; // pull the user out of the session
+                // update the current users linkedIn credentials
+                user.linkedIn.id    = profile.id;
+                // user.linkedIn.token = token;
+                user.linkedIn.name  = profile.name.givenName + ' ' + profile.name.familyName;
+                user.linkedIn.email = profile.emails[0].value;
+
+
+                // save the user
+                user.save(function(err) {
+
+                    if (err)
+                        throw err;
+                    return done(null, user);
+                });
+            }
         });
     }
 ));
@@ -89,13 +137,11 @@ passport.use('linkedin', new LinkedinStrategy({
 //   redirecting the user to linkedin.com.  After authorization, Linkedin
 //   will redirect the user back to this application at /auth/linkedin/callback
 app.get('/auth/linkedin',
-    passport.authenticate('linkedin', {
-        state: 'SOME STATE'
-    }),
-    function(req, res) {
-        // The request will be redirected to Linkedin for authentication, so this
-        // function will not be called.
-    });
+  passport.authenticate('linkedin', { state: 'SOME STATE' }),
+  function(req, res){
+    // The request will be redirected to Linkedin for authentication, so this
+    // function will not be called.
+  });
 
 // GET /auth/linkedin/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -103,19 +149,17 @@ app.get('/auth/linkedin',
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/linkedin/callback',
-    passport.authenticate('linkedin', {
-        failureRedirect: '/login'
-    }),
-    function(req, res) {
-        res.redirect('/');
-    });
+  passport.authenticate('linkedin', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 
 // ********* PASSPORT CONFIGURATION
 
 app.use(function(req, res, next) {
-    res.locals.jay = 'jay';
     res.locals.currentUser = req.user;
+    // res.locals.linkedInProfile = req.profile;
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
     next();
